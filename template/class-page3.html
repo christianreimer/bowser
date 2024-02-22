@@ -1,0 +1,406 @@
+<html data-theme="cupcake">
+
+<head>
+    <script src="../static/leader-line.min.js"></script>
+    <script src="../static/plain-draggable.min.js"></script>
+    <script src="../static/jquery-3.7.1.slim.min.js"></script>
+    <script src="../static/tailwindcss.3.4.1.js"></script>
+    <link href="../static/daisyui.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        .rect {
+            width: 150px;
+            height: 75px;
+            border: 2px solid oklch(var(--ac));
+            border-radius: 10px;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            /* font-family: Verdana; */
+            background-color: oklch(var(--b3));
+            padding: 5px;
+        }
+
+        .label {
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color: oklch(var(--b2));
+            border-radius: 5px;
+            position: absolute;
+            font-family: Verdana;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        var g_lines = [];
+        var g_elements = [];
+        var g_draggables = [];
+
+        const resetLayout = () => {
+            data = { "A": { "top": 100, "left": 634 }, "B": { "top": 100, "left": 1135 }, "label_A_B": { "top": 120, "left": 885 }, "C": { "top": 100, "left": 135 }, "label_C_A": { "top": 120, "left": 385 }, "D": { "top": 195, "left": 1135 }, "label_A_D": { "top": 215, "left": 885 } }
+
+            for (elem in data) {
+                var element = document.getElementById(elem);
+                $(element).offset(data[elem]);
+            }
+            fixLine();
+        }
+
+        const loadLayout = (data) => {
+            for (elem in data) {
+                var element = document.getElementById(elem);
+                $(element).offset(data[elem]);
+                g_elements.push(element);
+            }
+        }
+
+        const saveLayout = () => {
+            var layout = {};
+            for (elem of g_elements) {
+                layout[elem.id] = $(elem).offset();
+            }
+
+            $("#modal_content").html(JSON.stringify(layout));
+            document.getElementById('modal').showModal();
+        }
+
+        const fixLine = () => {
+            for (line of g_lines) {
+                line.position();
+            }
+        }
+
+        const toggleDrag = () => {
+            if (document.getElementById('dragToggle').checked) {
+                makeDrag();
+            } else {
+                stopDrag();
+            }
+        }
+
+        const makeDrag = () => {
+            for (elem of g_elements) {
+                var drag = new PlainDraggable(elem, { onMove: fixLine });
+                g_draggables.push(drag);
+            }
+            document.getElementById('checkmarkButton').style.visibility = 'visible';
+            document.getElementById('cancelButton').style.visibility = 'visible';
+        }
+
+        const stopDrag = () => {
+            for (drag of g_draggables) {
+                drag.disabled = true;
+            }
+            document.getElementById('checkmarkButton').style.visibility = 'hidden';
+            document.getElementById('cancelButton').style.visibility = 'hidden';
+        }
+
+        const setFocusNode = (name) => {
+            for (elem of g_elements) {
+                if (elem.id === name) {
+                    elem.style.borderColor = 'oklch(var(--p))';
+                    // elem.style.borderWidth = '4px';
+                }
+            }
+        }
+
+        const buildGraph = (elementData, lineData, focusNode) => {
+            loadLayout(elementData, focusNode);
+
+            for (line in lineData) {
+                if (lineData[line].start.startsWith('label')) {
+                    endPlug = 'arrow1'
+                } else {
+                    endPlug = 'behind'
+                }
+
+                var line = new LeaderLine(
+                    document.getElementById(lineData[line].start),
+                    document.getElementById(lineData[line].end),
+                    {
+                        startPlug: 'behind',
+                        endPlug: endPlug,
+                        color: 'oklch(var(--ac))',
+                        size: 2,
+                    },
+                );
+                g_lines.push(line);
+            }
+        }
+    </script>
+
+    <div class="navbar bg-secondary text-accent-content">
+        <button class="btn btn-ghost text-xl">Bowser: Government Organization</button>
+    </div>
+
+    <div class="bg-base-200" style="position:relative; width:100%; height:500px; overflow: auto;">
+        <div class="flex justify-start">
+            <div class="tooltip tooltip" data-tip="Toggle drag and drop">
+                <label class="btn btn-circle swap swap-rotate" onclick="toggleDrag()">
+                    <input id="dragToggle" type="checkbox" />
+                    <!-- unlocked -->
+                    <svg class="swap-off" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                    <!-- locked -->
+                    <svg class="swap-on" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                </label>
+            </div>
+            <div id="checkmarkButton" style="visibility: hidden;" class="tooltip tooltip-right" data-tip="Save layout">
+                <label class="btn btn-circle" onClick="saveLayout()">
+                    <!-- Check Mark -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </label>
+            </div>
+            <div id="cancelButton" style="visibility: hidden;" class="tooltip tooltip-right" data-tip="Reset layout">
+                <label class="btn btn-circle" onClick="resetLayout()">
+                    <!-- cancel mark -->
+                    <svg xmlns=" http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </label>
+            </div>
+        </div>
+
+        <div id="A" class="rect">
+            Government Organization
+        </div>
+
+        <div id="B" class="rect">
+            Economic Indicator
+        </div>
+
+        <div id="label_A_B" class="label">
+            is source of
+        </div>
+
+        <div id="C" class="rect">
+            Country
+        </div>
+
+        <div id="label_C_A" class="label">
+            is regulated by
+        </div>
+
+        <div id="D" class="rect">
+            Gographical Area of Interest
+        </div>
+
+        <div id="label_A_D" class="label">
+            extends over
+        </div>
+
+    </div>
+
+    <dialog id="modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <p class="py-4">
+            <div id="modal_content">Modal Content</div>
+            </p>
+            <div class="modal-action">
+                <form method="dialog">
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button class="btn">Close</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
+    <div class="flex gap-4">
+        <div class="flex-1">
+            <div class="card w-96 bg-base-100">
+                <div class="card-body">
+                    <h2 class="card-title">Government Organization</h2>
+                    <code class="text-xs mb-2">https://bsm.bloomberg.com/ontology/GovernmentOrganization</code>
+                    <p>Definition of Government Organization from the ontology. Definition of Government Organization
+                        from the ontology. </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="flex-auto">
+            <div class="card bg-base-100">
+                <div class="card-body">
+                    <div class="join join-vertical w-full">
+
+                        <div class="collapse collapse-arrow join-item border border-base-300">
+                            <input type="radio" name="my-accordion-4" checked="checked" />
+                            <div class="collapse-title text-lg font-medium">
+                                Class Tree
+                            </div>
+
+                            <div class="collapse-content">
+                                <div class="flex justify-start">
+                                    <ul class="timeline timeline-vertical">
+                                        <li>
+                                            <div class="timeline-middle">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" class="w-5 h-5">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div class="timeline-end timeline-box">
+                                                owl:Thing
+                                            </div>
+                                            <hr />
+                                        </li>
+                                        <li>
+                                            <hr />
+                                            <div class="timeline-middle">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" class="w-5 h-5">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div class="timeline-end timeline-box hover:border-primary">
+                                                <a href=#>Organization</a>
+                                            </div>
+                                            <hr />
+                                        </li>
+                                        <li>
+                                            <hr />
+                                            <div class="timeline-middle">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" class="w-5 h-5">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div class="timeline-end timeline-box">
+                                                Government Organization
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="collapse collapse-arrow join-item border border-base-300">
+                            <input type="radio" name="my-accordion-4" />
+                            <div class="collapse-title text-lg font-medium">
+                                Owl Definition
+                            </div>
+                            <div class="collapse-content">
+                                <pre><code class="text-sm">@prefix bsm: &lt;https://bsm.bloomberg.com/ontology&gt;
+    
+bsm:GovernmentOrganization a owl:Class ;
+    rdfs:subClassOf owl:Thing;
+.
+                                </code>
+                                </pre>
+                            </div>
+                        </div>
+
+                        <div class="collapse collapse-arrow join-item border border-base-300">
+                            <input type="radio" name="my-accordion-4" />
+                            <div class="collapse-title text-lg font-medium">
+                                SHACL Restrictions
+                            </div>
+                            <div class="collapse-content">
+                                <pre><code class="text-sm">bsm:GovernmentOrganization a owl:Class ;
+    rdfs:subClassOf owl:Thing;
+.
+                                </code>
+                                </pre>
+                            </div>
+                        </div>
+
+                        <div class="collapse collapse-arrow join-item border border-base-300">
+                            <input type="radio" name="my-accordion-4" />
+                            <div class="collapse-title text-lg font-medium">
+                                Notes
+                            </div>
+                            <div class="collapse-content">
+                                <p>Some important notes here.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto" style="margin: 25px;">
+        <table class="table">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Type</th>
+                    <th>Range</th>
+                    <th>Restrictions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                <tr>
+                    <td><a href="#">is source of</a></td>
+                    <td>ObjectProperty</td>
+                    <td><a href="#">Economic Indicator</a></td>
+                    <td>Max Cardinality: 1</td>
+                </tr>
+
+                <tr>
+                    <td><a href="#">extends over</a></td>
+                    <td>ObjectProperty</td>
+                    <td><a href="#">Geographic Area of Interest</a></td>
+                    <td>Max Cardinality: 1</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+        window.addEventListener('load', function () {
+            elementData = { "A": { "top": 100, "left": 634 }, "B": { "top": 100, "left": 1135 }, "label_A_B": { "top": 120, "left": 885 }, "C": { "top": 100, "left": 135 }, "label_C_A": { "top": 120, "left": 385 }, "D": { "top": 195, "left": 1135 }, "label_A_D": { "top": 215, "left": 885 } }
+            lineData = [{
+                "start": "A", "end": "label_A_B"
+            }, {
+                "start": "label_A_B", "end": "B"
+            }, {
+                "start": "C", "end": "label_C_A"
+            }, {
+                "start": "label_C_A", "end": "A"
+            }, {
+                "start": "A", "end": "label_A_D"
+            },
+            {
+                "start": "label_A_D", "end": "D"
+            }]
+            buildGraph(elementData, lineData);
+            setFocusNode('A');
+        });
+    </script>
+</body>
+
+</html>

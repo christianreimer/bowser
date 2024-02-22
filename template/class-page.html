@@ -9,10 +9,10 @@
 
     <style>
         .rect {
-            width: 150px;
-            height: 75px;
+            width: 50px;
+            height: 25px;
             border: 2px solid oklch(var(--ac));
-            border-radius: 10px;
+            border-radius: 5px;
             position: absolute;
             display: flex;
             justify-content: center;
@@ -20,6 +20,7 @@
             text-align: center;
             /* font-family: Verdana; */
             background-color: oklch(var(--b3));
+            z-index: 10;
             padding: 5px;
         }
 
@@ -131,6 +132,8 @@
                         endPlug: endPlug,
                         color: 'oklch(var(--ac))',
                         size: 2,
+                        path: "straight",
+                        endSocket: "top"
                     },
                 );
                 g_lines.push(line);
@@ -180,33 +183,38 @@
             </div>
         </div>
 
-        <div id="A" class="rect">
-            Government Organization
-        </div>
+        <div id='root' class='rect'>root</div>
+        <div id='E' class='rect'>E</div>
+        <div id='F' class='rect'>F</div>
+        <div id='F1' class='rect'>F1</div>
+        <div id='F2' class='rect'>F2</div>
+        <div id='F3' class='rect'>F3</div>
+        <div id='E2' class='rect'>E2</div>
+        <div id='E3' class='rect'>E3</div>
+        <div id='G' class='rect'>G</div>
+        <div id='H' class='rect'>H</div>
+        <div id='I' class='rect'>I</div>
+        <div id='I1' class='rect'>I1</div>
+        <div id='I2' class='rect'>I2</div>
+        <div id='I3' class='rect'>I3</div>
+        <div id='H2' class='rect'>H2</div>
+        <div id='H3' class='rect'>H3</div>
+        <div id='J' class='rect'>J</div>
+        <div id='K' class='rect'>K</div>
+        <div id='K1' class='rect'>K1</div>
+        <div id='K2' class='rect'>K2</div>
+        <div id='K3' class='rect'>K3</div>
+        <div id='L' class='rect'>L</div>
+        <div id='L1' class='rect'>L1</div>
+        <div id='L2' class='rect'>L2</div>
+        <div id='L3' class='rect'>L3</div>
+        <div id='J3' class='rect'>J3</div>
+        <div id='M' class='rect'>M</div>
+        <div id='M1' class='rect'>M1</div>
+        <div id='M2' class='rect'>M2</div>
+        <div id='M3' class='rect'>M3</div>
+        <div id='D3' class='rect'>D3</div>
 
-        <div id="B" class="rect">
-            Economic Indicator
-        </div>
-
-        <div id="label_A_B" class="label">
-            is source of
-        </div>
-
-        <div id="C" class="rect">
-            Country
-        </div>
-
-        <div id="label_C_A" class="label">
-            is regulated by
-        </div>
-
-        <div id="D" class="rect">
-            Gographical Area of Interest
-        </div>
-
-        <div id="label_A_D" class="label">
-            extends over
-        </div>
     </div>
 
     <dialog id="modal" class="modal modal-bottom sm:modal-middle">
@@ -223,184 +231,25 @@
         </div>
     </dialog>
 
-
-    <div class="flex">
-        <div class="flex-auto w-2/3 px-2">
-            <div class="card w-100 bg-base-100 my-4">
-                <div class="card-body">
-                    <h2 class="card-title">Government Organization</h2>
-                    <code class="text-sm py-2 ">govt:GovernmentOrganization</code>
-                    Definition of Government Organization from the ontology. Definition of Government Organization
-                    from the ontology. Definition of Government Organization from the ontology. Definition of Government
-                    Organization
-                    from the ontology.
-                </div>
-            </div>
-
-            <div class="overflow-x-auto" style="margin: 25px;">
-                <table class="table">
-                    <!-- head -->
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Type</th>
-                            <th>Range</th>
-                            <th>Restrictions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- row 1 -->
-                        <tr>
-                            <td><a href="#">is source of</a></td>
-                            <td>ObjectProperty</td>
-                            <td><a href="#">Economic Indicator</a></td>
-                            <td>Max Cardinality: 1</td>
-                        </tr>
-
-                        <tr>
-                            <td><a href="#">extends over</a></td>
-                            <td>ObjectProperty</td>
-                            <td><a href="#">Geographic Area of Interest</a></td>
-                            <td>Max Cardinality: 1</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="flex-auto w-1/3 px-2">
-            <div class="card w-100 bg-base-100 my-4">
-                <div class="card-body">
-                    <h2 class="card-title">Class Hierarchy</h2>
-
-                    <ul class="timeline timeline-vertical timeline-compact">
-                        <li>
-                            <div class="timeline-middle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="w-5 h-5">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="timeline-end timeline-box">
-                                owl:Thing
-                            </div>
-                            <hr />
-                        </li>
-                        <li>
-                            <hr />
-                            <div class="timeline-middle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="w-5 h-5">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="timeline-end timeline-box hover:border-primary">
-                                <a href=#>Organization</a>
-                            </div>
-                            <hr />
-                        </li>
-                        <li>
-                            <hr />
-                            <div class="timeline-middle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="w-5 h-5">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="timeline-end timeline-box">
-                                Government Organization
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-title">Downloads</div>
-                    <div class="stat-value">31K</div>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-title">Very long stat title</div>
-                    <div class="stat-value">4,200</div>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-title">Downloads</div>
-                    <div class="stat-value">31K</div>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-title">New Users</div>
-                    <div class="stat-value">4,200</div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="divider"></div>
-
-
-
-    <div class="divider"></div>
-
-    <div class="flex justify-center w-100 my-4">
-        <div class="stats shadow px-2">
-            <div class="stat place-items-center">
-                <div class="stat-title">Active Instances</div>
-                <div class="stat-value">31K</div>
-            </div>
-
-            <div class="stat place-items-center">
-                <div class="stat-title">Inactive Instances</div>
-                <div class="stat-value">4,200</div>
-            </div>
-
-            <div class="stat place-items-center">
-                <div class="stat-title">Alias Coverage</div>
-                <div class="stat-value">7.5%</div>
-            </div>
-
-            <div class="stat place-items-center">
-                <div class="stat-title">Aliases</div>
-                <div class="stat-value">1,200</div>
-            </div>
-        </div>
-    </div>
-
     <script>
         window.addEventListener('load', function () {
-            elementData = { "A": { "top": 100, "left": 634 }, "B": { "top": 100, "left": 1135 }, "label_A_B": { "top": 120, "left": 885 }, "C": { "top": 100, "left": 135 }, "label_C_A": { "top": 120, "left": 385 }, "D": { "top": 195, "left": 1135 }, "label_A_D": { "top": 215, "left": 885 } }
-            lineData = [{
-                "start": "A", "end": "label_A_B"
-            }, {
-                "start": "label_A_B", "end": "B"
-            }, {
-                "start": "C", "end": "label_C_A"
-            }, {
-                "start": "label_C_A", "end": "A"
-            }, {
-                "start": "A", "end": "label_A_D"
-            },
-            {
-                "start": "label_A_D", "end": "D"
-            }]
+            elementData = { "root": { "top": 50.0, "left": 531.25 }, "E": { "top": 93.75, "left": 225.0 }, "F": { "top": 137.5, "left": 137.5 }, "F1": { "top": 181.25, "left": 50.0 }, "F2": { "top": 181.25, "left": 137.5 }, "F3": { "top": 181.25, "left": 225.0 }, "E2": { "top": 137.5, "left": 225.0 }, "E3": { "top": 137.5, "left": 312.5 }, "G": { "top": 93.75, "left": 750.0 }, "H": { "top": 137.5, "left": 400.0 }, "I": { "top": 181.25, "left": 312.5 }, "I1": { "top": 225.0, "left": 225.0 }, "I2": { "top": 225.0, "left": 312.5 }, "I3": { "top": 225.0, "left": 400.0 }, "H2": { "top": 181.25, "left": 400.0 }, "H3": { "top": 181.25, "left": 487.5 }, "J": { "top": 137.5, "left": 750.0 }, "K": { "top": 181.25, "left": 575.0 }, "K1": { "top": 225.0, "left": 487.5 }, "K2": { "top": 225.0, "left": 575.0 }, "K3": { "top": 225.0, "left": 662.5 }, "L": { "top": 181.25, "left": 837.5 }, "L1": { "top": 225.0, "left": 750.0 }, "L2": { "top": 225.0, "left": 837.5 }, "L3": { "top": 225.0, "left": 925.0 }, "J3": { "top": 181.25, "left": 925.0 }, "M": { "top": 137.5, "left": 1100.0 }, "M1": { "top": 181.25, "left": 1012.5 }, "M2": { "top": 181.25, "left": 1100.0 }, "M3": { "top": 181.25, "left": 1187.5 }, "D3": { "top": 93.75, "left": 837.5 } }
+            // elementData = { "A": { "top": 100, "left": 634 }, "B": { "top": 100, "left": 1135 }, "label_A_B": { "top": 120, "left": 885 }, "C": { "top": 100, "left": 135 }, "label_C_A": { "top": 120, "left": 385 }, "D": { "top": 195, "left": 1135 }, "label_A_D": { "top": 215, "left": 885 } }
+            lineData = [{ "start": "root", "end": "E" }, { "start": "E", "end": "F" }, { "start": "F", "end": "F1" }, { "start": "F", "end": "F2" }, { "start": "F", "end": "F3" }, { "start": "E", "end": "E2" }, { "start": "E", "end": "E3" }, { "start": "root", "end": "G" }, { "start": "G", "end": "H" }, { "start": "H", "end": "I" }, { "start": "I", "end": "I1" }, { "start": "I", "end": "I2" }, { "start": "I", "end": "I3" }, { "start": "H", "end": "H2" }, { "start": "H", "end": "H3" }, { "start": "G", "end": "J" }, { "start": "J", "end": "K" }, { "start": "K", "end": "K1" }, { "start": "K", "end": "K2" }, { "start": "K", "end": "K3" }, { "start": "J", "end": "L" }, { "start": "L", "end": "L1" }, { "start": "L", "end": "L2" }, { "start": "L", "end": "L3" }, { "start": "J", "end": "J3" }, { "start": "G", "end": "M" }, { "start": "M", "end": "M1" }, { "start": "M", "end": "M2" }, { "start": "M", "end": "M3" }, { "start": "root", "end": "D3" }]
+            // lineData = [{
+            //     "start": "A", "end": "label_A_B"
+            // }, {
+            //     "start": "label_A_B", "end": "B"
+            // }, {
+            //     "start": "C", "end": "label_C_A"
+            // }, {
+            //     "start": "label_C_A", "end": "A"
+            // }, {
+            //     "start": "A", "end": "label_A_D"
+            // },
+            // {
+            //     "start": "label_A_D", "end": "D"
+            // }]
             buildGraph(elementData, lineData);
             setFocusNode('A');
         });
