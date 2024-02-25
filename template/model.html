@@ -6,9 +6,10 @@
     <script src="../static/jquery-3.7.1.slim.min.js"></script>
     <script src="../static/tailwindcss.3.4.1.js"></script>
     <link href="../static/daisyui.min.css" rel="stylesheet" type="text/css" />
+    <script src="../src/model.js"></script>
 
     <style>
-        .rect {
+        .class {
             width: 50px;
             height: 25px;
             border: 2px solid oklch(var(--ac));
@@ -24,361 +25,73 @@
             cursor: pointer;
         }
 
-        .label {
-            padding-left: 10px;
-            padding-right: 10px;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            background-color: oklch(var(--b2));
+        .category {
+            width: 50px;
+            height: 25px;
+            border: 2px solid oklch(var(--ac));
             border-radius: 5px;
             position: absolute;
-            font-family: Verdana;
             display: flex;
             justify-content: center;
             align-items: center;
+            text-align: center;
+            background-color: oklch(var(--b1));
+            z-index: 10;
+            padding: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
     <script>
-        var g_lines = [];
-        var g_elements = [];
-        var g_draggables = [];
-
-        const addNodes = () => {
-            var nodes = { "K": { "top": 181.25, "left": 575.0 }, "K1": { "top": 225.0, "left": 487.5 }, "K2": { "top": 225.0, "left": 575.0 }, "K3": { "top": 225.0, "left": 662.5 } }
-            var lines = [{ "start": "J", "end": "K" }, { "start": "K", "end": "K1" }, { "start": "K", "end": "K2" }, { "start": "K", "end": "K3" }]
-
-            for (node in nodes) {
-                var elem = document.createElement('div');
-                elem.id = node;
-                elem.className = 'rect';
-                elem.innerHTML = node;
-                document.getElementById('canvas').appendChild(elem);
-                $(elem).offset(nodes[node]);
-            }
-
-            for (line of lines) {
-                var line = new LeaderLine(
-                    document.getElementById(line.start),
-                    document.getElementById(line.end),
-                    {
-                        color: 'oklch(var(--ac))',
-                        size: 2,
-                        path: "straight",
-                        endSocket: "top"
-                    },
-                );
-                g_lines.push(line);
-            }
-        }
-
-        const resetLayout = () => {
-            data = { "A": { "top": 100, "left": 634 }, "B": { "top": 100, "left": 1135 }, "label_A_B": { "top": 120, "left": 885 }, "C": { "top": 100, "left": 135 }, "label_C_A": { "top": 120, "left": 385 }, "D": { "top": 195, "left": 1135 }, "label_A_D": { "top": 215, "left": 885 } }
-
-            for (elem in data) {
-                var element = document.getElementById(elem);
-                $(element).offset(data[elem]);
-            }
-            fixLine();
-        }
-
-        const loadLayout = (data) => {
-            for (elem in data) {
-                var element = document.getElementById(elem);
-                $(element).offset(data[elem]);
-                g_elements.push(element);
-            }
-        }
-
-        const saveLayout = () => {
-            var layout = {};
-            for (elem of g_elements) {
-                layout[elem.id] = $(elem).offset();
-            }
-
-            $("#modal_content").html(JSON.stringify(layout));
-            document.getElementById('modal').showModal();
-        }
-
-        const fixLine = () => {
-            for (line of g_lines) {
-                line.position();
-            }
-        }
-
-        const toggleDrag = () => {
-            if (document.getElementById('dragToggle').checked) {
-                makeDrag();
-            } else {
-                stopDrag();
-            }
-        }
-
-        const makeDrag = () => {
-            for (elem of g_elements) {
-                var drag = new PlainDraggable(elem, { onMove: fixLine });
-                g_draggables.push(drag);
-            }
-            document.getElementById('checkmarkButton').style.visibility = 'visible';
-            document.getElementById('cancelButton').style.visibility = 'visible';
-        }
-
-        const stopDrag = () => {
-            for (drag of g_draggables) {
-                drag.disabled = true;
-            }
-            document.getElementById('checkmarkButton').style.visibility = 'hidden';
-            document.getElementById('cancelButton').style.visibility = 'hidden';
-        }
-
-        const setFocusNode = (name) => {
-            for (elem of g_elements) {
-                elem.style.borderColor = 'oklch(var(--ac))';
-                if (elem.id === name) {
-                    elem.style.borderColor = 'oklch(var(--a))';
-                }
-            }
-        }
-
-        const buildGraph = (elementData, lineData, focusNode) => {
-            loadLayout(elementData, focusNode);
-
-            for (line in lineData) {
-                if (lineData[line].start.startsWith('label')) {
-                    endPlug = 'arrow1'
-                } else {
-                    endPlug = 'behind'
-                }
-
-                var line = new LeaderLine(
-                    document.getElementById(lineData[line].start),
-                    document.getElementById(lineData[line].end),
-                    {
-                        endPlug: endPlug,
-                        color: 'oklch(var(--ac))',
-                        size: 2,
-                        path: "straight",
-                        endSocket: "top"
-                    },
-                );
-                g_lines.push(line);
-            }
-        }
-
-        const nodeClicked = (elemId) => {
-            var elem = document.getElementById(elemId);
-            if (elem.style.borderColor === 'oklch(var(--a))') {
-                alert('clicked ' + elem.id);
-            } else {
-                setFocusNode(elemId);
-            }
-        }
-
         window.addEventListener("message", (event) => {
-            if (!event.isTrusted) {
-                return;
-            }
-
-            if (event.data.action == "expand") {
-                addNodes()
-            }
-
-            if (event.data.action == "select") {
-                setFocusNode('E');
-            }
-
+            handleEvent(event);
         }, false);
     </script>
 
     <div id="canvas" class="bg-base-200">
-        <div id='root' class='rect'>root</div>
-        <div id='E' class='rect'>E</div>
-        <div id='F' class='rect'>F</div>
-        <div id='F1' class='rect'>F1</div>
-        <div id='F2' class='rect'>F2</div>
-        <div id='F3' class='rect'>F3</div>
-        <div id='E2' class='rect'>E2</div>
-        <div id='E3' class='rect'>E3</div>
-        <div id='G' class='rect'>G</div>
-        <div id='H' class='rect'>H</div>
-        <div id='I' class='rect'>I</div>
-        <div id='I1' class='rect'>I1</div>
-        <div id='I2' class='rect'>I2</div>
-        <div id='I3' class='rect'>I3</div>
-        <div id='H2' class='rect'>H2</div>
-        <div id='H3' class='rect'>H3</div>
-        <div id='J' class='rect'>J</div>
-        <!-- <div id='K' class='rect'>K</div>
-        <div id='K1' class='rect'>K1</div>
-        <div id='K2' class='rect'>K2</div>
-        <div id='K3' class='rect'>K3</div> -->
-        <div id='L' class='rect'>L</div>
-        <div id='L1' class='rect'>L1</div>
-        <div id='L2' class='rect'>L2</div>
-        <div id='L3' class='rect'>L3</div>
-        <div id='J3' class='rect'>J3</div>
-        <div id='M' class='rect'>M</div>
-        <div id='M1' class='rect'>M1</div>
-        <div id='M2' class='rect'>M2</div>
-        <div id='M3' class='rect'>M3</div>
-        <div id='D3' class='rect'>D3</div>
-    </div>
+        <div id='root' class='class'>root</div>
+        <div id='E' class='class'>E</div>
+        <div id='F' class='class'>F</div>
+        <div id='F1' class='class'>F1</div>
+        <div id='F2' class='class'>F2</div>
+        <div id='F3' class='class'>F3</div>
+        <div id='E2' class='class'>E2</div>
+        <div id='E3' class='class'>E3</div>
+        <div id='G' class='class'>G</div>
+        <div id='H' class='class'>H</div>
+        <div id='I' class='class'>I</div>
+        <div id='I1' class='class'>I1</div>
+        <div id='I2' class='class'>I2</div>
+        <div id='I3' class='class'>I3</div>
+        <div id='H2' class='class'>H2</div>
+        <div id='H3' class='class'>H3</div>
+        <div id='J' class='class'>J</div>
 
-    <dialog id="modal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <p class="py-4">
-            <div id="modal_content">Modal Content</div>
-            </p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button in form, it will close the modal -->
-                    <button class="btn">Close</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
+        <div id='K' class='category'>K</div>
+        <div id='K1' class='category'>K1</div>
+        <div id='K2' class='category'>K2</div>
+        <div id='K3' class='category'>K3</div>
+
+        <div id='L' class='class'>L</div>
+        <div id='L1' class='class'>L1</div>
+        <div id='L2' class='class'>L2</div>
+        <div id='L3' class='class'>L3</div>
+        <div id='J3' class='class'>J3</div>
+        <div id='M' class='class'>M</div>
+        <div id='M1' class='class'>M1</div>
+        <div id='M2' class='class'>M2</div>
+        <div id='M3' class='class'>M3</div>
+        <div id='D3' class='class'>D3</div>
+    </div>
 
     <script>
         window.addEventListener('load', function () {
-            // elementData = { "root": { "top": 50.0, "left": 531.25 }, "E": { "top": 93.75, "left": 225.0 }, "F": { "top": 137.5, "left": 137.5 }, "F1": { "top": 181.25, "left": 50.0 }, "F2": { "top": 181.25, "left": 137.5 }, "F3": { "top": 181.25, "left": 225.0 }, "E2": { "top": 137.5, "left": 225.0 }, "E3": { "top": 137.5, "left": 312.5 }, "G": { "top": 93.75, "left": 750.0 }, "H": { "top": 137.5, "left": 400.0 }, "I": { "top": 181.25, "left": 312.5 }, "I1": { "top": 225.0, "left": 225.0 }, "I2": { "top": 225.0, "left": 312.5 }, "I3": { "top": 225.0, "left": 400.0 }, "H2": { "top": 181.25, "left": 400.0 }, "H3": { "top": 181.25, "left": 487.5 }, "J": { "top": 137.5, "left": 750.0 }, "K": { "top": 181.25, "left": 575.0 }, "K1": { "top": 225.0, "left": 487.5 }, "K2": { "top": 225.0, "left": 575.0 }, "K3": { "top": 225.0, "left": 662.5 }, "L": { "top": 181.25, "left": 837.5 }, "L1": { "top": 225.0, "left": 750.0 }, "L2": { "top": 225.0, "left": 837.5 }, "L3": { "top": 225.0, "left": 925.0 }, "J3": { "top": 181.25, "left": 925.0 }, "M": { "top": 137.5, "left": 1100.0 }, "M1": { "top": 181.25, "left": 1012.5 }, "M2": { "top": 181.25, "left": 1100.0 }, "M3": { "top": 181.25, "left": 1187.5 }, "D3": { "top": 93.75, "left": 837.5 } }
-            // lineData = [{ "start": "root", "end": "E" }, { "start": "E", "end": "F" }, { "start": "F", "end": "F1" }, { "start": "F", "end": "F2" }, { "start": "F", "end": "F3" }, { "start": "E", "end": "E2" }, { "start": "E", "end": "E3" }, { "start": "root", "end": "G" }, { "start": "G", "end": "H" }, { "start": "H", "end": "I" }, { "start": "I", "end": "I1" }, { "start": "I", "end": "I2" }, { "start": "I", "end": "I3" }, { "start": "H", "end": "H2" }, { "start": "H", "end": "H3" }, { "start": "G", "end": "J" }, { "start": "J", "end": "K" }, { "start": "K", "end": "K1" }, { "start": "K", "end": "K2" }, { "start": "K", "end": "K3" }, { "start": "J", "end": "L" }, { "start": "L", "end": "L1" }, { "start": "L", "end": "L2" }, { "start": "L", "end": "L3" }, { "start": "J", "end": "J3" }, { "start": "G", "end": "M" }, { "start": "M", "end": "M1" }, { "start": "M", "end": "M2" }, { "start": "M", "end": "M3" }, { "start": "root", "end": "D3" }]
-
-            var nodesWithoutK = { "root": { "top": 50.0, "left": 531.25 }, "E": { "top": 93.75, "left": 225.0 }, "F": { "top": 137.5, "left": 137.5 }, "F1": { "top": 181.25, "left": 50.0 }, "F2": { "top": 181.25, "left": 137.5 }, "F3": { "top": 181.25, "left": 225.0 }, "E2": { "top": 137.5, "left": 225.0 }, "E3": { "top": 137.5, "left": 312.5 }, "G": { "top": 93.75, "left": 750.0 }, "H": { "top": 137.5, "left": 400.0 }, "I": { "top": 181.25, "left": 312.5 }, "I1": { "top": 225.0, "left": 225.0 }, "I2": { "top": 225.0, "left": 312.5 }, "I3": { "top": 225.0, "left": 400.0 }, "H2": { "top": 181.25, "left": 400.0 }, "H3": { "top": 181.25, "left": 487.5 }, "J": { "top": 137.5, "left": 750.0 }, "L": { "top": 181.25, "left": 837.5 }, "L1": { "top": 225.0, "left": 750.0 }, "L2": { "top": 225.0, "left": 837.5 }, "L3": { "top": 225.0, "left": 925.0 }, "J3": { "top": 181.25, "left": 925.0 }, "M": { "top": 137.5, "left": 1100.0 }, "M1": { "top": 181.25, "left": 1012.5 }, "M2": { "top": 181.25, "left": 1100.0 }, "M3": { "top": 181.25, "left": 1187.5 }, "D3": { "top": 93.75, "left": 837.5 } }
-            var nodesK = { "K": { "top": 181.25, "left": 575.0 }, "K1": { "top": 225.0, "left": 487.5 }, "K2": { "top": 225.0, "left": 575.0 }, "K3": { "top": 225.0, "left": 662.5 } }
-
-            var linesWithoutK = [
-                {
-                    "start": "root",
-                    "end": "E"
-                },
-                {
-                    "start": "E",
-                    "end": "F"
-                },
-                {
-                    "start": "F",
-                    "end": "F1"
-                },
-                {
-                    "start": "F",
-                    "end": "F2"
-                },
-                {
-                    "start": "F",
-                    "end": "F3"
-                },
-                {
-                    "start": "E",
-                    "end": "E2"
-                },
-                {
-                    "start": "E",
-                    "end": "E3"
-                },
-                {
-                    "start": "root",
-                    "end": "G"
-                },
-                {
-                    "start": "G",
-                    "end": "H"
-                },
-                {
-                    "start": "H",
-                    "end": "I"
-                },
-                {
-                    "start": "I",
-                    "end": "I1"
-                },
-                {
-                    "start": "I",
-                    "end": "I2"
-                },
-                {
-                    "start": "I",
-                    "end": "I3"
-                },
-                {
-                    "start": "H",
-                    "end": "H2"
-                },
-                {
-                    "start": "H",
-                    "end": "H3"
-                },
-                {
-                    "start": "G",
-                    "end": "J"
-                },
-                {
-                    "start": "J",
-                    "end": "L"
-                },
-                {
-                    "start": "L",
-                    "end": "L1"
-                },
-                {
-                    "start": "L",
-                    "end": "L2"
-                },
-                {
-                    "start": "L",
-                    "end": "L3"
-                },
-                {
-                    "start": "J",
-                    "end": "J3"
-                },
-                {
-                    "start": "G",
-                    "end": "M"
-                },
-                {
-                    "start": "M",
-                    "end": "M1"
-                },
-                {
-                    "start": "M",
-                    "end": "M2"
-                },
-                {
-                    "start": "M",
-                    "end": "M3"
-                },
-                {
-                    "start": "root",
-                    "end": "D3"
-                }
-            ]
-
-            var linesK = [
-                {
-                    "start": "J",
-                    "end": "K"
-                },
-                {
-                    "start": "K",
-                    "end": "K1"
-                },
-                {
-                    "start": "K",
-                    "end": "K2"
-                },
-                {
-                    "start": "K",
-                    "end": "K3"
-                }
-            ]
-            buildGraph(nodesWithoutK, linesWithoutK);
+            initialize();
 
             window.addEventListener('click', (e) => {
-                if (e.target.className === 'rect') {
-                    nodeClicked(e.target.id);
-                }
+                handleClick(e);
             });
         });
     </script>
